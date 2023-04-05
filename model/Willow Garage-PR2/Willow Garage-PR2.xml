@@ -1,0 +1,264 @@
+<!-- ======================================================
+	This file is part of MuJoCo.     
+	Copyright 2009-2016 Roboti LLC.
+	
+	Model 		:: PR2 from Willow Garage 
+		Source		: (Provided by Sergey Levine, UC Berkeley)
+		Downloaded	: 18July'14
+		
+	Mujoco		:: Advanced physics simulation engine
+		Source		: www.roboti.us
+		Version		: 1.31
+		Released 	: 23Apr16
+		
+	Author		:: Vikash Kumar
+		Contacts 	: kumar@roboti.us
+		Last edits 	: 30Apr'16, 14Dec'15, 10Oct'15
+====================================================== -->
+<mujoco model="pr2(v1.31)">
+	<compiler coordinate="local" angle="radian"  meshdir="Meshes/"/>
+
+	<option timestep="0.01" gravity="0 0 -9.81"/>
+
+	<visual>
+		<global fovy="45" linewidth="2" glow="0.3"/>
+		<quality shadowsize="4096" numslices="28"/>
+		<map stiffness="50" stiffnessrot="100"/>
+		<scale forcewidth="0.03" contactwidth="0.15" contactheight="0.1" connect="0.1" com="0.2" jointlength="2.5" jointwidth="0.05"
+					 actuatorlength="0.5" actuatorwidth="0.3" framelength="1" framewidth="0.03"/>
+		<rgba haze="0.6 0.8 0.9 1" force="0 1 0 0.5" com="0 0 1 1"/>
+	</visual>
+
+	<asset>
+		<mesh file="base_L.stl"/>
+		<mesh file="caster_L.stl"/>
+		<mesh file="torso_lift_L.stl"/>
+		<mesh file="head_pan_L.stl"/>
+		<mesh file="head_tilt_L.stl"/>
+		<mesh file="tilting_hokuyo_L.stl"/>
+		<mesh file="shoulder_pan.stl"/>
+		<mesh file="shoulder_lift.stl"/>
+		<mesh file="upper_arm_roll_L.stl"/>
+		<mesh file="upper_arm.stl"/>
+		<mesh file="elbow_flex.stl"/>
+		<mesh file="forearm_roll_L.stl"/>
+		<mesh file="forearm.stl"/>
+		
+		<mesh file="wrist_flex.stl"/>
+		<mesh file="wrist_roll_L.stl"/>
+		<mesh file="gripper_palm.stl"/>
+		<mesh file="l_finger.stl"/>
+		<mesh file="l_finger_tip.stl"/>
+				
+		<material name="MatGnd" specular=".3" shininess=".3" reflectance="0.3" rgba=".5 .55 .5 1"/>
+	</asset>
+
+	<contact>       
+		<pair geom1="r_gripper_l_finger_tip" geom2="r_gripper_r_finger_tip"/>
+		<pair geom1="l_gripper_l_finger_tip" geom2="l_gripper_r_finger_tip"/>
+		<pair geom1="base" geom2="r_forearm"/>
+		<pair geom1="base" geom2="l_forearm"/>
+	</contact>
+
+	<default>
+		<joint limited="false" damping="1.0" armature=".05" frictionloss="0.1"/>
+		<geom contype="1" conaffinity="0" friction="1 0.1 0.1" type="mesh"/>
+		<default class="gripper">
+			<joint damping="0.005" armature="0.005"/>
+		</default>
+	</default>
+
+	<worldbody>
+		<light directional="true" cutoff="4" exponent="20" diffuse="1 1 1" specular="0 0 0" pos=".5 0.75 1.5" dir="-.5 -0.75 -1.5"/>
+		<geom name="Ground" material="MatGnd" type="plane" contype="0" conaffinity="1" pos="0 0 0" size="1.5 1.5 0.25"/>
+	
+		<body name="base_footprint" pos="0 0 0">
+			<joint name="rootx" type="slide" pos="0 0 0" axis="1 0 0"/>
+			<joint name="rooty" type="slide" pos="0 0 0" axis="0 1 0"/>
+			<joint name="rootwz" type="hinge" pos="0 0 0" axis="0 0 1"/>
+			<inertial pos="0 0 0" mass="1" diaginertia="0.01 0.01 0.01" />
+
+			<body name="base_link" pos="0 0 0.051">
+				<inertial pos="-0.061 0 0.293" quat="0.973598 0.001764 -0.228065 -0.009443" mass="116" diaginertia="6.293885 5.669245 3.041772"/>
+				<geom name="base" mesh="base_L" contype="0" rgba="0.5 0.5 0.5 1"/>
+				
+				<body name="torso_lift_link" pos="-0.05 0 0.739675">
+					<joint name="torso_lift_joint" type="slide" pos="0 0 0" axis="0 0 1" limited="true" range="0 0.31"/>
+					<inertial pos="-0.1 0 -0.0885" quat="0.999335 0.007626 0.035453 0.003712" mass="36.248046" diaginertia="2.783075 2.510450 0.514581"/>
+					<geom name="geom15" mesh="torso_lift_L" contype="0" rgba="0.8 0.9 0.8 1"/>
+					
+					<!-- Right Arm & Gripper -->
+					<body name="r_shoulder_pan_link" pos="0 -0.188 0">
+						<joint name="r_shoulder_pan_joint" type="hinge" pos="0 0 0" axis="0 0 1" limited="true" range="-2.285398 0.714602"/>
+						<inertial pos="-0.001201 0.024513 -0.098231" quat="0.927482 -0.087656 0.074060 -0.355821"
+											mass="25.799322" diaginertia="0.934201 0.837701 0.242033" />
+						<geom name="geom32" mesh="shoulder_pan" contype="0" rgba="0 0.6 1 1"/>
+						
+						<body name="r_shoulder_lift_link" pos="0.1 0 0">
+							<joint name="r_shoulder_lift_joint" type="hinge" pos="0 0 0" axis="0 1 0" limited="true" range="-0.5236 1.3963"/>
+							<inertial pos="0.02195 -0.02664 -0.03127" quat="0.791779 0.478014 0.238985 0.295762" 
+												mass="2.74988" diaginertia="0.026187 0.020730 0.015168" />
+							<geom name="geom33" mesh="shoulder_lift" contype="0" rgba="0.6 0.6 0.6 1"/>
+							
+							<body name="r_upper_arm_roll_link" pos="0 0 0">
+								<joint name="r_upper_arm_roll_joint" type="hinge" pos="0 0 0" axis="1 0 0" limited="true" range="-3.9 0.8"/>
+								<inertial pos="0 0 0" mass="0.1" diaginertia="0.01 0.01 0.01" />
+
+								<body name="r_upper_arm_link" pos="0 0 0">
+									<inertial pos="0.21398 -0.01621 -0.0002" quat="-0.045020 0.697462 -0.088537 0.709705"
+														mass="6.01769" diaginertia="0.076138 0.074931 0.015133" />
+									<geom name="geom35" mesh="upper_arm" contype="0"  rgba="0 0.8 0 1"/>
+									
+									<body name="r_elbow_flex_link" pos="0.4 0 0">
+										<joint name="r_elbow_flex_joint" type="hinge" pos="0 0 0" axis="0 1 0" limited="true" range="-2.3213 0"/>
+										<inertial pos="0.01014 0.00032 -0.01211" quat="0.308784 0.646797 0.639077 0.279083" 
+															mass="1.90327" diaginertia="0.004419 0.003965 0.003090" />
+										<geom name="geom36" mesh="elbow_flex" contype="0" rgba="0.7 0.7 0.7 1"/>
+										
+										<body name="r_forearm_roll_link" pos="0 0 0">
+											<joint name="r_forearm_roll_joint" type="hinge"   pos="0 0 0" axis="1 0 0"/>
+											<inertial pos="0 0 0" mass="0.1" diaginertia="0.01 0.01 0.01" />
+																			
+											<body name="r_forearm_link" pos="0 0 0">
+												<inertial pos="0.18791 -0.00017 -0.00912" quat="-0.000587 0.726286 -0.003969 0.687381" 
+																	mass="2.57968" diaginertia="0.016633 0.015078 0.003609" />
+												<geom name="r_forearm" mesh="forearm" contype="0" rgba="0.7 0.7 0.7 1"/>
+												
+												<body name="r_wrist_flex_link" pos="0.321 0 0">
+													<joint name="r_wrist_flex_joint" type="hinge" pos="0 0 0" axis="0 1 0" limited="true" range="-2.094 0"/>
+													<inertial pos="-0.00157 0 -0.00075" quat="0.695976 0.696411 -0.123560 0.123942"
+																		mass="0.61402" diaginertia="0.000653 0.000643 0.000198" />
+													<geom name="geom39" mesh="wrist_flex" contype="0" rgba="0.3 0.3 0.2 1"/>
+													
+													<body name="r_wrist_roll_link" pos="0 0 0">
+														<joint name="r_wrist_roll_joint" type="hinge" pos="0 0 0" axis="1 0 0" limited="true" range="-1 1"/>
+														<inertial pos="0.06623 0.00053 -0.00119" mass="0.68007" diaginertia="0.010866 0.010678 0.010351" />
+														<geom name="geom41" mesh="gripper_palm" contype="0" rgba="1 0 0 1"/>
+
+														<body name="r_gripper_l_finger_link" pos="0.07691 0.01 0">
+															<joint name="r_gripper_l_finger_joint" type="hinge" pos="0 0 0" axis="0 0 1" limited="true" range="0 0.548"/>
+															<inertial pos="0.03598 0.0173 -0.00164" quat="0.574440 0.429111 0.518782 0.465562" 
+																				mass="0.17126" diaginertia="0.000198 0.000181 0.000077" />
+															<geom name="geom43" mesh="l_finger" rgba="0.32421875 0.3359375 0.3515625 1"/>
+																
+															<body name="r_gripper_l_finger_tip_link" pos="0.09137 0.00495 0">
+																<joint name="r_gripper_l_finger_tip_joint" type="hinge" pos="0 0 0" axis="0 0 1" limited="true" range="-.548 0"/>
+																<inertial pos="0.00423 0.00284 0" quat="0.249588 0.661594 -0.249588 0.661594" 
+																					mass="0.04419" diaginertia="0.000015 0.000015 0.000003" />
+																<geom name="r_gripper_l_finger_tip" mesh="l_finger_tip" rgba="0 0.8 0 1"/>
+															</body>
+														</body>
+															
+														<body name="r_gripper_r_finger_link" pos="0.07691 -0.01 0">
+															<joint name="r_gripper_r_finger_joint" type="hinge" pos="0 0 0" axis="0 0 -1" limited="true" range="0 .548"/>
+															<inertial pos="0.03576 -0.01736 -0.00095" quat="0.474684 0.510909 0.446353 0.560727" 
+																				mass="0.17389" diaginertia="0.000199 0.000181 0.000077"/>
+															<geom name="geom45" euler="3.14 0 0" mesh="l_finger" rgba="0.32421875 0.3359375 0.3515625 1"/>
+																
+															<body name="r_gripper_r_finger_tip_link" pos="0.09137 -0.00495 0">
+																<joint name="r_gripper_r_finger_tip_joint" type="hinge" pos="0 0 0" axis="0 0 -1" limited="true" range="-0.548 0"/>
+																<inertial pos="0.00423 -0.00284 0" quat="-0.249588 0.661594 0.249588 0.661594"
+																					mass="0.04419" diaginertia="0.000015 0.000015 0.000003"/>
+																<geom name="r_gripper_r_finger_tip" mesh="l_finger_tip" euler="3.14 0 0" rgba="0 0.8 0 1"/>
+															</body>
+														</body>
+													</body>
+												</body>
+											</body>
+										</body>
+									</body>
+								</body>
+							</body>
+						</body>
+					</body>
+
+					<!-- Left Arm & Gripper -->
+					<body name="l_shoulder_pan_link" pos="0 0.188 0">
+						<joint name="l_shoulder_pan_joint" type="hinge" pos="0 0 0" axis="0 0 1" limited="true" range="-0.714602 2.285398"/>
+						<inertial pos="-0.001201 0.024513 -0.098231" quat="0.927482 -0.087656 0.074060 -0.355821"
+											mass="25.799322" diaginertia="0.934201 0.837701 0.242033" />
+						<geom name="geom50" mesh="shoulder_pan" contype="0" rgba="0 0.6 1 1"/>
+						
+						<body name="l_shoulder_lift_link" pos="0.1 0 0">
+							<joint name="l_shoulder_lift_joint" type="hinge" pos="0 0 0" axis="0 1 0" limited="true" range="-0.5236 1.3963"/>
+							<inertial pos="0.02195 -0.02664 -0.03127" quat="0.791779 0.478014 0.238985 0.295762"
+												mass="2.74988" diaginertia="0.026187 0.020730 0.015168"/>
+							<geom name="geom51" mesh="shoulder_lift" rgba="0.7 0.7 0.7 1"/>
+							
+							<body name="l_upper_arm_roll_link" pos="0 0 0">
+								<joint name="l_upper_arm_roll_joint" type="hinge" pos="0 0 0" axis="1 0 0" limited="true" range="-0.8 3.9"/>
+								<inertial pos="0 0 0" mass="0.1" diaginertia="0.01 0.01 0.01"/>
+
+								<body name="l_upper_arm_link" pos="0 0 0">
+									<inertial pos="0.21405 0.01658 -0.00057" quat="-0.090901 0.708675 -0.051638 0.697746" 
+														mass="6.01769" diaginertia="0.076070 0.074882 0.015107"/>
+									<geom name="geom53" mesh="upper_arm" contype="0" rgba="0 0.8 0 1"/>
+									
+									<body name="l_elbow_flex_link" pos="0.4 0 0">
+										<joint name="l_elbow_flex_joint" type="hinge" pos="0 0 0" axis="0 1 0" limited="true" range="-2.3213 0"/>
+										<inertial pos="0.01014 0.00032 -0.01211" quat="0.308784 0.646797 0.639077 0.279083"
+															mass="1.90327" diaginertia="0.004419 0.003965 0.003090"/>
+										<geom name="geom54" mesh="elbow_flex" rgba="0.7 0.7 0.7 1"/>
+										
+										<body name="l_forearm_roll_link" pos="0 0 0">
+											<joint name="l_forearm_roll_joint" type="hinge" pos="0 0 0" axis="1 0 0"/>
+											<inertial pos="0 0 0" mass="0.1" diaginertia="0.01 0.01 0.01"/>
+																			
+											<body name="l_forearm_link" pos="0 0 0">
+												<inertial pos="0.18791 -0.00017 -0.00912" quat="-0.000587 0.726286 -0.003969 0.687381" 
+																	mass="2.57968" diaginertia="0.016633 0.015078 0.003609"/>
+												<geom name="l_forearm" mesh="forearm" contype="0" rgba="0.7 0.7 0.7 1"/>
+																					
+												<body name="l_wrist_flex_link" pos="0.321 0 0">
+													<joint name="l_wrist_flex_joint" type="hinge" pos="0 0 0" axis="0 1 0" limited="true" range="-2.094 0"/>
+													<inertial pos="-0.00157 0 -0.00075" quat="0.695976 0.696411 -0.123560 0.123942"
+																		mass="0.61402" diaginertia="0.000653 0.000643 0.000198"/>
+													<geom name="geom57" mesh="wrist_flex" rgba="0.7 0.7 0.7 1"/>
+																							
+													<body name="l_wrist_roll_link" pos="0 0 0">
+														<joint name="l_wrist_roll_joint" type="hinge" pos="0 0 0" axis="1 0 0" limited="true" range="-1 1"/>
+														<inertial pos="0.06623 0.00053 -0.00119" mass="0.68007" diaginertia="0.010866 0.010678 0.010351"/>
+														<geom name="geom59" mesh="gripper_palm" contype="0" rgba="0.8 0 0 1"/>
+
+														<body name="l_gripper_l_finger_link" pos="0.07691 0.01 0">
+															<joint name="l_gripper_l_finger_joint" type="hinge" pos="0 0 0" axis="0 0 1" limited="true" range="0 0.548"/>
+															<inertial pos="0.03598 0.0173 -0.00164" quat="0.574440 0.429111 0.518782 0.465562"
+																				mass="0.17126" diaginertia="0.000198 0.000181 0.000077"/>
+															<geom name="geom61" mesh="l_finger" rgba="0.32421875 0.3359375 0.3515625 1"/>
+																
+															<body name="l_gripper_l_finger_tip_link" pos="0.09137 0.00495 0">
+																<joint name="l_gripper_l_finger_tip_joint" type="hinge" pos="0 0 0" axis="0 0 1" limited="true" range="-0.548 0"/>
+																<inertial pos="0.00423 0.00284 0" quat="0.249588 0.661594 -0.249588 0.661594" 
+																					mass="0.04419" diaginertia="0.000015 0.000015 0.000003"/>
+																<geom name="l_gripper_l_finger_tip" mesh="l_finger_tip" rgba="0 0.8 0 1"/>
+															</body>
+														</body>
+																											
+														<body name="l_gripper_r_finger_link" pos="0.07691 -0.01 0">
+															<joint name="l_gripper_r_finger_joint" type="hinge" pos="0 0 0" axis="0 0 -1" limited="true" range="0 0.548"/>
+															<inertial pos="0.03576 -0.01736 -0.00095" quat="0.474684 0.510909 0.446353 0.560727"
+																				mass="0.17389" diaginertia="0.000199 0.000181 0.000077"/>
+															<geom name="geom63" mesh="l_finger" euler="3.14 0 0" rgba="0.32421875 0.3359375 0.3515625 1"/>
+																													
+															<body name="l_gripper_r_finger_tip_link" pos="0.09137 -0.00495 0">
+																<joint name="l_gripper_r_finger_tip_joint" type="hinge" pos="0 0 0" axis="0 0 -1" limited="true" range="-0.548 0"/>
+																<inertial pos="0.00423 -0.00284 0" quat="-0.249588 0.661594 0.249588 0.661594"
+																					mass="0.04419" diaginertia="0.000015 0.000015 0.000003"/>
+																<geom name="l_gripper_r_finger_tip" mesh="l_finger_tip" euler="3.14 0 0" rgba="0 0.8 0 1"/>
+															</body>
+														</body>
+													</body>
+												</body>
+											</body>
+										</body>
+									</body>
+								</body>
+							</body>
+						</body>
+					</body>
+				</body>
+			</body>
+		</body>
+		
+	</worldbody>
+</mujoco>

@@ -218,7 +218,7 @@ void CRobotControl::UserControl(CARBML& robot, mjModel* model, mjData* data)
 		// cout << "Exec Time : " << std::fixed << micro.count() << " [us] to run" << endl;
 		// cout << "Exec Time : " << std::fixed << mill.count() << " [ms] to run" << endl;
 		std::ofstream outputFile;
-		outputFile.open ("eigen_arbml_w_all.csv", ios::app);
+		outputFile.open ("../data/eigen_arbml_w_LTO.csv", ios::app);
 		outputFile << micro.count() << endl;
 		outputFile.close();
 	}

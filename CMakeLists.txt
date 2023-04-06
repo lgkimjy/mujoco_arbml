@@ -21,21 +21,16 @@ if(NOT CMAKE_BUILD_TYPE)
 endif()
 
 set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE)
+set(CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE)        # LTO option
 set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_CXX_FLAGS} -Wl,-no-as-needed -fexceptions")
-# set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")           # -Wall -Wextra -Wpedantic -Werror")
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS} -g")
-# set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS} -O3 -march=native")
-# set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS} -O3")
-# set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS} -O2")
-# set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS} -O1")
-# set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS} -Os")
+set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS} -O3 -march=native")   # -Ofast, -O3, -O2, -O1, -Os
 
 
 find_package(X11 REQUIRED)
 find_package(Eigen3 REQUIRED)
-find_library(GLFW libglfw.so.3 HINTS /home/kistnuc/KIST_ws/dev_ws/mujoco_basic_linux/lib/glfw/glfw-3.3.8)
-
+find_library(GLFW libglfw.so.3 REQUIRED) # HINTS ${CMAKE_SOURCE_DIR}/lib/glfw/glfw-3.3.8)
 
 message(STATUS "PROJECT_NAME: " ${PROJECT_NAME})
 message(STATUS "MUJOCO_HOME: " ${CMAKE_SOURCE_DIR})

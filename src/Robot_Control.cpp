@@ -174,7 +174,7 @@ void CRobotControl::UserControl(CARBML& robot, mjModel* model, mjData* data)
 	////////////////////	Main Control Routine	////////////////////
 	if (count_sim % CONTROL_RATE == 0) {
 		//	Time Stamp Routine : Start
-		// std::chrono::system_clock::time_point StartTime = std::chrono::system_clock::now();
+		std::chrono::system_clock::time_point StartTime = std::chrono::system_clock::now();
 
 		/////	01. Input feedback variables(joint pos/vel, base pos/ori/vel)
 		getFeedbackInformation(data, robot);
@@ -205,11 +205,11 @@ void CRobotControl::UserControl(CARBML& robot, mjModel* model, mjData* data)
 		++count_ctrl;
 
 		///// End of Time Stamp /////
-		// std::chrono::system_clock::time_point EndTime = std::chrono::system_clock::now();
+		std::chrono::system_clock::time_point EndTime = std::chrono::system_clock::now();
 
 		// std::chrono::duration<double> DefaultSec = EndTime - StartTime;
 		// std::chrono::nanoseconds nano = EndTime - StartTime;
-		// std::chrono::microseconds micro = std::chrono::duration_cast<chrono::microseconds>(EndTime - StartTime);
+		std::chrono::microseconds micro = std::chrono::duration_cast<chrono::microseconds>(EndTime - StartTime);
 		// std::chrono::milliseconds mill = std::chrono::duration_cast<chrono::milliseconds>(EndTime - StartTime);
 
 		// std::cout.precision(6);
@@ -217,6 +217,10 @@ void CRobotControl::UserControl(CARBML& robot, mjModel* model, mjData* data)
 		// cout << "Exec Time : " << std::fixed << nano.count() << " [ns] to run" << endl;
 		// cout << "Exec Time : " << std::fixed << micro.count() << " [us] to run" << endl;
 		// cout << "Exec Time : " << std::fixed << mill.count() << " [ms] to run" << endl;
+		std::ofstream outputFile;
+		outputFile.open ("eigen_arbml_w_all.csv", ios::app);
+		outputFile << micro.count() << endl;
+		outputFile.close();
 	}
 	++count_sim;
 }
